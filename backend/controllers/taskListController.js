@@ -20,18 +20,17 @@ const createTaskList = async (req, res) => {
 };
 
 // Get all task lists for a specific user
-const getTaskLists = async (req, res) => {
+const getTaskLists = async (ownerName) => {
   try {
-    const taskLists = await TaskList.find();
-    if (!taskLists || taskLists.length === 0) {
-      return res.status(404).json({ message: "No task lists found." });
-    }
-    return res.status(200).json(taskLists);
+    const taskLists = await TaskList.find({ ownerName }); // Query by ownerName
+    return taskLists;
   } catch (error) {
-    console.error("Error fetching task lists:", error);
-    return res.status(500).json({ message: "Error fetching task lists." });
+    console.error('Error fetching task lists:', error);
+    throw new Error('Failed to fetch task lists');
   }
 };
+
+
 
 // Delete a task list
 const deleteTaskList = async (req, res) => {

@@ -7,16 +7,16 @@ export default function TaskListsPage() {
   interface TaskList {
     _id: string; // MongoDB Object ID
     name: string;
-    ownerName: string;
+    ownerName: string; // This will be fetched from the database
   }
 
-  const { getToken, isSignedIn } = useAuth(); // Get authentication status and method to get token
+  const { getToken, isSignedIn } = useAuth();
   const [taskLists, setTaskLists] = useState<TaskList[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // State for error handling
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true; // Track if the component is mounted
+    let isMounted = true;
 
     const fetchTaskLists = async () => {
       if (!isSignedIn) {
@@ -28,15 +28,15 @@ export default function TaskListsPage() {
       }
 
       try {
-        const token = await getToken(); // Get the JWT token from Clerk
+        const token = await getToken();
         const response = await axios.get('/api/task-lists', {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the request
+            Authorization: `Bearer ${token}`, // Include the token
           },
         });
 
         if (isMounted) {
-          setTaskLists(response.data); // Set task lists only if mounted
+          setTaskLists(response.data);
         }
       } catch (err) {
         console.error('Error fetching task lists:', err);
@@ -55,14 +55,14 @@ export default function TaskListsPage() {
     return () => {
       isMounted = false; // Cleanup on unmount
     };
-  }, [isSignedIn, getToken]); // Re-fetch if isSignedIn or getToken changes
+  }, [isSignedIn, getToken]);
 
   if (loading) {
-    return <p>Loading...</p>; // Optional loading state
+    return <p>Loading...</p>;
   }
 
   if (error) {
-    return <p>{error}</p>; // Show error message if fetching fails
+    return <p>{error}</p>;
   }
 
   return (
